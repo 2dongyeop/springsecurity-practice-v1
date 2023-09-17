@@ -1,5 +1,8 @@
 package io.dongvelop.springsecuritypractice.member.service;
 
+import io.dongvelop.springsecuritypractice.common.authority.TokenInfo;
+import io.dongvelop.springsecuritypractice.common.authority.TokenProvider;
+import io.dongvelop.springsecuritypractice.common.dto.request.LoginRequest;
 import io.dongvelop.springsecuritypractice.common.dto.request.SignUpRequest;
 import io.dongvelop.springsecuritypractice.common.enumtype.RoleType;
 import io.dongvelop.springsecuritypractice.member.entity.Member;
@@ -8,6 +11,9 @@ import io.dongvelop.springsecuritypractice.member.repository.MemberRepository;
 import io.dongvelop.springsecuritypractice.member.repository.MemberRoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +25,8 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final MemberRoleRepository memberRoleRepository;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final TokenProvider tokenProvider;
 
     /**
      * 회원가입
@@ -47,5 +55,25 @@ public class MemberService {
         memberRoleRepository.save(memberRole);
 
         return member.getId();
+    }
+
+
+    /**
+     * 로그인 (토큰 발급)
+     *
+     * @param request : 로그인 요청
+     * @return : Bearer Token
+     */
+    public TokenInfo login(final LoginRequest request) {
+
+        // LoginRequest 에 있는 정보를 가지고 UsernamePasswordAuthenticationToken 생성
+        final UsernamePasswordAuthenticationToken authenticationToken
+                = new UsernamePasswordAuthenticationToken(request.loginId(), request.password());
+
+        // 위에서 생성한 UsernamePasswordAuthenticationToken로 AuthenticationManagerBuilder.authenticate() 메서드를 호출
+        // -> CustumUserDetailsService.loadUserByUsername()를 호출하여 DB에 있는 사용자 정보와 비교하도록 되어있음
+        final Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
+        return tokenProvider.createToken(authentication);
     }
 }
