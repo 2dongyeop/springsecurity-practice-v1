@@ -24,10 +24,11 @@ import java.util.stream.Collectors;
 @Component
 public class TokenProvider {
 
-    @Value("${jwt.secret}")
-    private String secretKey;
+    private final Key key;
 
-    private Key key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
+    public TokenProvider(@Value("${jwt.secret}") final String secretKey) {
+        this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
+    }
 
     public TokenInfo createToken(final Authentication authentication) {
 

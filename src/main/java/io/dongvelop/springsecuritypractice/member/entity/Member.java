@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -24,19 +26,23 @@ public class Member {
     private String logId;
 
     @Column(nullable = false, length = 100)
-    String password;
+    private String password;
 
     @Column(nullable = false, length = 10)
-    String name;
+    private String name;
 
     @Column(nullable = false)
     @Temporal(TemporalType.DATE)
-    LocalDate birthDate;
+    private LocalDate birthDate;
 
     @Column(nullable = false, length = 5)
     @Enumerated(EnumType.STRING)
-    Gendertype gendertype;
+    private Gendertype gendertype;
 
     @Column(nullable = false, length = 30)
-    String email;
+    private String email;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "member")
+    private List<MemberRole> memberRole = new ArrayList<>();
 }
