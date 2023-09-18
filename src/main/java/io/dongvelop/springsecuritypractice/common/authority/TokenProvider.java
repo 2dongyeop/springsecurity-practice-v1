@@ -1,5 +1,6 @@
 package io.dongvelop.springsecuritypractice.common.authority;
 
+import io.dongvelop.springsecuritypractice.common.entity.CustomUser;
 import io.dongvelop.springsecuritypractice.common.util.Const;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -11,7 +12,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -43,9 +43,11 @@ public class TokenProvider {
         final Date accessTokenExpiration = new Date(now.getTime() + Const.EXPIRATION_MILLISECONDS);
 
         // 토큰 생성
+        final CustomUser principal = (CustomUser) authentication.getPrincipal();
         final String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("auth", authorities)
+                .claim("userId", principal.getUserId())
                 .setIssuedAt(now)
                 .setExpiration(accessTokenExpiration)
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -67,6 +69,7 @@ public class TokenProvider {
 
         // claims에서 authorities 추출 (ex. "ROLE_USER","ROLE_ADMIN" 형태)
         final String authoritiesString = (String) claims.get("auth");
+        final Long userId = Long.valueOf(String.valueOf(claims.get("userId")));
         if (authoritiesString == null) {
             throw new IllegalArgumentException();
         }
@@ -78,7 +81,7 @@ public class TokenProvider {
                 .collect(Collectors.toList());
 
         // 사용자 정보 생성
-        final UserDetails principal = new User(claims.getSubject(), "", authorities);
+        final UserDetails principal = new CustomUser(userId, claims.getSubject(), "", authorities);
 
         // 토큰 생성
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);

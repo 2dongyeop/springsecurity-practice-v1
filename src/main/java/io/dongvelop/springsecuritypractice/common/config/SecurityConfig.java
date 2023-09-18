@@ -35,7 +35,8 @@ public class SecurityConfig {
                         it -> it.requestMatchers(new AntPathRequestMatcher("/h2-console/**")).anonymous()
                                 .requestMatchers(new AntPathRequestMatcher("/api/member/signup")).anonymous()
                                 .requestMatchers(new AntPathRequestMatcher("/api/member/login")).anonymous()
-                                .anyRequest().hasRole("MEMBER"))
+//                                .anyRequest().hasRole("MEMBER"))
+                                .anyRequest().permitAll())
                 .addFilterBefore(
                         new JwtAuthenticationFilter(tokenProvider),
                         UsernamePasswordAuthenticationFilter.class

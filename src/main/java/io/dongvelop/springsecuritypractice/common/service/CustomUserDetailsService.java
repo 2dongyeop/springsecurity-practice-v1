@@ -1,10 +1,10 @@
 package io.dongvelop.springsecuritypractice.common.service;
 
+import io.dongvelop.springsecuritypractice.common.entity.CustomUser;
 import io.dongvelop.springsecuritypractice.member.entity.Member;
 import io.dongvelop.springsecuritypractice.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,7 +28,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     private UserDetails createUserDetails(final Member member) {
-        return new User(
+        return new CustomUser(
+                member.getId(),
                 member.getLogId(),
                 passwordEncoder.encode(member.getPassword()),
                 member.getMemberRole()
