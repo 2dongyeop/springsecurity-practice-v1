@@ -2,6 +2,7 @@ package io.dongvelop.springsecuritypractice.member.controller;
 
 import io.dongvelop.springsecuritypractice.common.authority.TokenInfo;
 import io.dongvelop.springsecuritypractice.common.dto.request.LoginRequest;
+import io.dongvelop.springsecuritypractice.common.dto.request.MemberDto;
 import io.dongvelop.springsecuritypractice.common.dto.request.SignUpRequest;
 import io.dongvelop.springsecuritypractice.common.dto.response.GetMemberResponse;
 import io.dongvelop.springsecuritypractice.common.entity.CustomUser;
@@ -60,5 +61,13 @@ public class MemberController {
 
         log.debug("member id[{}]", memberId);
         return new GetMemberResponse(memberService.searchMyInfo(memberId));
+    }
+
+
+    @PutMapping("/info")
+    public Long updateInfo(@RequestBody final MemberDto memberDto) {
+
+        final CustomUser principal = (CustomUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return memberService.update(principal.getUserId(), memberDto);
     }
 }

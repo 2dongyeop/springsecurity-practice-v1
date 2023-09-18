@@ -3,6 +3,7 @@ package io.dongvelop.springsecuritypractice.member.service;
 import io.dongvelop.springsecuritypractice.common.authority.TokenInfo;
 import io.dongvelop.springsecuritypractice.common.authority.TokenProvider;
 import io.dongvelop.springsecuritypractice.common.dto.request.LoginRequest;
+import io.dongvelop.springsecuritypractice.common.dto.request.MemberDto;
 import io.dongvelop.springsecuritypractice.common.dto.request.SignUpRequest;
 import io.dongvelop.springsecuritypractice.common.enumtype.RoleType;
 import io.dongvelop.springsecuritypractice.member.entity.Member;
@@ -91,5 +92,21 @@ public class MemberService {
                     log.debug("id[{}] not found", id);
                     return new IllegalArgumentException();
                 });
+    }
+
+    /**
+     * 내 정보 수정
+     *
+     * @param userId    : 수정할 멤버 이름
+     * @param memberDto : 수정할 정보
+     * @return : 수정된 멤버 아이디
+     */
+    @Transactional
+    public Long update(final Long userId, final MemberDto memberDto) {
+
+        final Member member = searchMyInfo(userId);
+        member.updateName(memberDto.name());
+
+        return member.getId();
     }
 }

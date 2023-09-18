@@ -45,4 +45,8 @@ public class Member {
     @Builder.Default
     @OneToMany(mappedBy = "member")
     private List<MemberRole> memberRole = new ArrayList<>();
+
+    public void updateName(final String name) {
+        this.name = name;
+    }
 }
