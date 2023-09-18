@@ -76,4 +76,20 @@ public class MemberService {
 
         return tokenProvider.createToken(authentication);
     }
+
+
+    /**
+     * 내 정보 조회
+     *
+     * @param id : 조회할 멤버 아이디
+     * @return : 조회 결과
+     */
+    public Member searchMyInfo(final Long id) {
+
+        return memberRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.debug("id[{}] not found", id);
+                    return new IllegalArgumentException();
+                });
+    }
 }

@@ -1,5 +1,8 @@
 package io.dongvelop.springsecuritypractice.common.enumtype;
 
+import lombok.Getter;
+
+@Getter
 public enum Gendertype {
 
     MAN("남"),

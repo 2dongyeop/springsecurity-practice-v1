@@ -26,21 +26,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
 
-        http
+        return http
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(it -> it.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .headers(it -> it.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .authorizeHttpRequests(
-                        it -> it.requestMatchers(new AntPathRequestMatcher("/api/member/signup")).anonymous()
-                                .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).anonymous()
-                                .anyRequest().permitAll())
+                        it -> it.requestMatchers(new AntPathRequestMatcher("/h2-console/**")).anonymous()
+                                .requestMatchers(new AntPathRequestMatcher("/api/member/signup")).anonymous()
+                                .requestMatchers(new AntPathRequestMatcher("/api/member/login")).anonymous()
+                                .anyRequest().hasRole("MEMBER"))
                 .addFilterBefore(
                         new JwtAuthenticationFilter(tokenProvider),
                         UsernamePasswordAuthenticationFilter.class
-                );
-
-        return http.build();
+                )
+                .build();
     }
 
     @Bean
