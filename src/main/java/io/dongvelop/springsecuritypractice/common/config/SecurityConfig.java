@@ -2,6 +2,7 @@ package io.dongvelop.springsecuritypractice.common.config;
 
 import io.dongvelop.springsecuritypractice.common.authority.JwtAuthenticationFilter;
 import io.dongvelop.springsecuritypractice.common.authority.TokenProvider;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,6 +42,22 @@ public class SecurityConfig {
                         new JwtAuthenticationFilter(tokenProvider),
                         UsernamePasswordAuthenticationFilter.class
                 )
+
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .deleteCookies("JESESSIONID")
+                        .invalidateHttpSession(true)
+                        .logoutSuccessUrl("/")
+                        .addLogoutHandler(((request, response, authentication) -> {
+
+                            final HttpSession session = request.getSession();
+                            if (session != null) {
+                                session.invalidate();
+                            }
+                        }))
+                        .logoutSuccessHandler(((request, response, authentication) -> response.sendRedirect("/")))
+                )
+
                 .build();
     }
 

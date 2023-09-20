@@ -7,9 +7,12 @@ import io.dongvelop.springsecuritypractice.common.dto.request.SignUpRequest;
 import io.dongvelop.springsecuritypractice.common.dto.response.GetMemberResponse;
 import io.dongvelop.springsecuritypractice.common.entity.CustomUser;
 import io.dongvelop.springsecuritypractice.member.service.MemberService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -46,6 +49,25 @@ public class MemberController {
         log.debug("login request[{}]", request);
         return memberService.login(request);
     }
+
+
+    /**
+     * 로그아웃 API V1
+     * @param request
+     * @param response
+     */
+    @GetMapping("/logout/v1")
+    public void logout(final HttpServletRequest request, final HttpServletResponse response) {
+        new SecurityContextLogoutHandler()
+                .logout(request, response, SecurityContextHolder.getContext().getAuthentication());
+
+        log.debug("logout success");
+    }
+
+
+    /**
+     * 로그아웃 API V2는 SecurityConfig에서 시큐리티 설정 작성
+     */
 
 
     /**
